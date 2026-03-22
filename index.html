@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ocean Depths — An Interactive Journey</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="loader" class="loader">
+    <div class="loader__bubbles">
+      <span></span><span></span><span></span>
+    </div>
+    <p class="loader__text">Descending into the deep...</p>
+  </div>
+
+  <nav class="nav">
+    <span class="nav__logo">&#9652; OCEAN DEPTHS</span>
+    <ul class="nav__links">
+      <li><a href="#surface">Surface</a></li>
+      <li><a href="#sunlight">Sunlight</a></li>
+      <li><a href="#twilight">Twilight</a></li>
+      <li><a href="#midnight">Midnight</a></li>
+      <li><a href="#hadal">Hadal</a></li>
+    </ul>
+    <div class="nav__depth-indicator">
+      <span id="depth-label">0m</span>
+    </div>
+  </nav>
+
+  <div class="depth-bar">
+    <div class="depth-bar__fill" id="depth-fill"></div>
+  </div>
+
+  <section id="surface" class="zone zone--surface" data-depth="0m">
+    <div class="zone__bg-layer zone__bg-layer--1"></div>
+    <div class="zone__bg-layer zone__bg-layer--2"></div>
+    <div class="zone__content">
+      <div class="zone__eyebrow">Zone 1 · 0 — 20m</div>
+      <h1 class="zone__title">The Surface</h1>
+      <p class="zone__body">
+        Where sky meets sea. The sunlit surface is alive with waves, wind, and the
+        constant dance of light. Take a breath — this is where our journey begins.
+      </p>
+      <a href="#sunlight" class="zone__cta">Dive Deeper ↓</a>
+    </div>
+    <div class="zone__deco zone__deco--waves" aria-hidden="true"></div>
+  </section>
+
+  <section id="sunlight" class="zone zone--sunlight" data-depth="200m">
+    <div class="zone__bg-layer zone__bg-layer--1"></div>
+    <div class="zone__content">
+      <div class="zone__eyebrow">Zone 2 · 20 — 200m</div>
+      <h2 class="zone__title">Sunlight Zone</h2>
+      <p class="zone__body">
+        The Euphotic Zone — bathed in filtered sunlight. Coral reefs tower like
+        cities. Schools of fish shimmer like silver ribbons. Life here is
+        abundant, colorful, and electric.
+      </p>
+    </div>
+    <div class="creatures" id="creatures-sunlight">
+      <div class="creature-card" data-creature="clownfish">
+        <div class="creature-card__icon">🐠</div>
+        <h3>Clownfish</h3>
+        <p>Lives symbiotically within sea anemones for protection.</p>
+      </div>
+      <div class="creature-card" data-creature="turtle">
+        <div class="creature-card__icon">🐢</div>
+        <h3>Sea Turtle</h3>
+        <p>Ancient navigators — they've swum these waters for 100 million years.</p>
+      </div>
+      <div class="creature-card" data-creature="shark">
+        <div class="creature-card__icon">🦈</div>
+        <h3>Reef Shark</h3>
+        <p>Apex predators keeping the reef ecosystem in perfect balance.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="twilight" class="zone zone--twilight" data-depth="1000m">
+    <div class="zone__bg-layer zone__bg-layer--1"></div>
+    <div class="zone__content">
+      <div class="zone__eyebrow">Zone 3 · 200 — 1,000m</div>
+      <h2 class="zone__title">Twilight Zone</h2>
+      <p class="zone__body">
+        The Mesopelagic Zone — where light fades to a faint, ghostly blue.
+        Creatures here migrate vertically every day, chasing food toward the
+        surface at night and retreating into the dark by dawn.
+      </p>
+    </div>
+    <div class="stats-row" id="stats-twilight">
+      <div class="stat-block">
+        <span class="stat-block__number" data-target="1000">0</span>
+        <span class="stat-block__unit">metres deep</span>
+        <span class="stat-block__label">Zone bottom</span>
+      </div>
+      <div class="stat-block">
+        <span class="stat-block__number" data-target="1">0</span>
+        <span class="stat-block__unit">% sunlight</span>
+        <span class="stat-block__label">Reaches here</span>
+      </div>
+      <div class="stat-block">
+        <span class="stat-block__number" data-target="4">0</span>
+        <span class="stat-block__unit">°C</span>
+        <span class="stat-block__label">Temperature</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="midnight" class="zone zone--midnight" data-depth="4000m">
+    <div class="zone__bg-layer zone__bg-layer--1"></div>
+    <div class="zone__content">
+      <div class="zone__eyebrow">Zone 4 · 1,000 — 4,000m</div>
+      <h2 class="zone__title">Midnight Zone</h2>
+      <p class="zone__body">
+        The Bathypelagic Zone — total darkness. No sunlight has ever touched
+        these waters. Here, life creates its own light. Bioluminescence flickers
+        like a starfield turned inside-out.
+      </p>
+    </div>
+    <div class="biolumin-canvas" id="biolumin-canvas" aria-label="Click to create bioluminescent glow">
+      <p class="biolumin-canvas__hint">Click anywhere to create light</p>
+    </div>
+  </section>
+
+  <section id="hadal" class="zone zone--hadal" data-depth="11000m">
+    <div class="zone__bg-layer zone__bg-layer--1"></div>
+    <div class="zone__content zone__content--center">
+      <div class="zone__eyebrow">Zone 5 · 6,000 — 11,000m</div>
+      <h2 class="zone__title">The Hadal Zone</h2>
+      <p class="zone__body">
+        The deepest trenches on Earth — the Mariana, the Tonga, the Philippine.
+        Crushing pressure. Near-freezing temperatures. Yet life endures.
+        Microscopic organisms thrive where no sunlight has ever reached,
+        reminding us that life finds a way.
+      </p>
+      <div class="hadal__pressure-meter">
+        <span>Pressure at 11,000m:</span>
+        <strong>1,100 atmospheres</strong>
+      </div>
+      <a href="#surface" class="zone__cta zone__cta--light">↑ Return to the Surface</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>Built for Frontend Odyssey · Ocean Depths Theme</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
