@@ -1,0 +1,68 @@
+.zone__title {
+  will-change: transform;
+  transition: transform 0.05s linear;
+}
+
+.zone {
+  isolation: isolate;
+}
+
+.zone__bg-layer {
+  will-change: transform;
+  transition: transform 0.05s linear;
+}
+
+#depth-label {
+  display: inline-block;
+  transition: color 0.6s ease, transform 0.6s ease;
+  transform-origin: center;
+}
+
+.nav__links a.active::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.stat-block__number {
+  display: inline-block;
+  transition: color 0.4s ease;
+}
+
+.stats-row .stat-block:nth-child(1) { transition-delay: 0s; }
+.stats-row .stat-block:nth-child(2) { transition-delay: 0.12s; }
+.stats-row .stat-block:nth-child(3) { transition-delay: 0.24s; }
+
+.creatures {
+  padding-bottom: 1rem;
+}
+
+.depth-bar__fill {
+  background: linear-gradient(
+    to bottom,
+    #0ea5e9  0%,
+    #0369a1  20%,
+    #1e3a5f  40%,
+    #052337  60%,
+    #34d399  80%,
+    #059669  100%
+  );
+  transition: height 0.08s linear;
+}
+
+.hadal__pressure-meter {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s ease 0.5s, transform 0.7s ease 0.5s;
+}
+
+.hadal__pressure-meter.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
