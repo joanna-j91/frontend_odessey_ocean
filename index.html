@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="scroll.css" />
 </head>
 <body>
+    <div id="cursor" class="custom-cursor"></div>
 
   <div id="loader" class="loader">
     <div class="loader__bubbles">
@@ -62,6 +63,11 @@
       </p>
     </div>
     <div class="creatures" id="creatures-sunlight">
+      <div class="floating-creatures" aria-hidden="true">
+          <span class="floater" style="--x:15%;--delay:0s">🐟</span>
+          <span class="floater" style="--x:70%;--delay:2s">🐡</span>
+          <span class="floater" style="--x:40%;--delay:4s">🦑</span>
+      </div>
       <div class="creature-card" data-creature="clownfish">
         <div class="creature-card__icon">🐠</div>
         <h3>Clownfish</h3>
@@ -111,6 +117,7 @@
   </section>
 
   <section id="midnight" class="zone zone--midnight" data-depth="4000m">
+    <canvas id="deep-canvas"></canvas>
     <div class="zone__bg-layer zone__bg-layer--1"></div>
     <div class="zone__content">
       <div class="zone__eyebrow reveal">Zone 4 · 1,000 — 4,000m</div>

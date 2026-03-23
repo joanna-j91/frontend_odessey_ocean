@@ -218,4 +218,65 @@ document.addEventListener('DOMContentLoaded', () => {
   updateActiveNav();
   updateNav();
 
+
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+
+  document.querySelectorAll('a, button, .creature-card, .biolumin-canvas').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('expanded'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('expanded'));
+  });
+
+  const canvas  = document.getElementById('deep-canvas');
+  const ctx     = canvas.getContext('2d');
+  const orbs    = [];
+ 
+  function resizeCanvas() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function drawOrbs() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    orbs.forEach((orb, i) => {
+      orb.life -= 0.008;
+      orb.radius += 0.4;
+      if (orb.life <= 0) { orbs.splice(i, 1); return; }
+      ctx.beginPath();
+      ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${orb.r},${orb.g},${orb.b},${orb.life * 0.25})`;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(${orb.r},${orb.g},${orb.b},${orb.life * 0.6})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+    requestAnimationFrame(drawOrbs);
+  }
+  drawOrbs();
+ 
+  const biluminCanvas = document.getElementById('biolumin-canvas');
+  const hint          = biluminCanvas.querySelector('.biolumin-canvas__hint');
+  biluminCanvas.addEventListener('click', e => {
+    if (hint) hint.style.opacity = '0';
+    const rect = biluminCanvas.getBoundingClientRect();
+    const colors = [
+      [52,211,153], [165,243,252], [56,189,248], [167,243,208]
+    ];
+    for (let i = 0; i < 6; i++) {
+      const [r,g,b] = colors[Math.floor(Math.random() * colors.length)];
+      orbs.push({
+        x: e.clientX - rect.left + (Math.random()-0.5)*40,
+        y: e.clientY - rect.top  + (Math.random()-0.5)*40,
+        radius: Math.random() * 8 + 4,
+        life: 1,
+        r, g, b
+      });
+  }
+});
 });
