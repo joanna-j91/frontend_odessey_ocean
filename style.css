@@ -399,3 +399,112 @@ img, svg { display: block; max-width: 100%; }
   font-family: var(--font-mono);
   border-top: 1px solid rgba(56, 189, 248, 0.05);
 }
+
+@media (max-width: 768px) {
+  .nav__links { display: none; }
+
+  .zone__title { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+
+  .creatures { flex-direction: column; }
+
+  .creature-card { flex: 1 1 100%; }
+
+  .stats-row { flex-direction: column; gap: 1rem; }
+
+  .biolumin-canvas { height: 180px; }
+
+  .hadal__pressure-meter { flex-direction: column; text-align: center; gap: 0.4rem; }
+}
+
+@media (max-width: 480px) {
+  .zone {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  .zone__body { font-size: 0.8rem; }
+
+  .zone__cta { padding: 0.65rem 1.4rem; font-size: 0.7rem; }
+
+  .stat-block__number { font-size: 2.2rem; }
+}
+
+.nav__hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav__hamburger span {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: var(--color-water-light);
+  transition: all 0.3s ease;
+}
+
+.nav__mobile-menu {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0; right: 0;
+  background: rgba(5,13,26,0.97);
+  backdrop-filter: blur(12px);
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+  gap: 1.2rem;
+  z-index: 99;
+  border-bottom: 1px solid rgba(56,189,248,0.1);
+}
+
+.nav__mobile-menu.open { display: flex; }
+
+.nav__mobile-menu a {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color 0.3s ease;
+}
+
+.nav__mobile-menu a:hover { color: var(--color-water-light); }
+
+@media (max-width: 768px) {
+  .nav__hamburger { display: flex; }
+}
+
+
+.zone--surface .zone__content {
+  z-index: 3;
+}
+
+.zone--surface .zone__deco--waves {
+  z-index: 4;
+}
+
+#fish-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#sonar-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.zone--hadal { cursor: crosshair; }
+
+

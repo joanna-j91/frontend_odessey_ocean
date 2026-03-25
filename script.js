@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
 
   const loader = document.getElementById('loader');
@@ -279,4 +280,134 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 });
+
+const hamburger  = document.getElementById('nav-hamburger');
+const mobileMenu = document.getElementById('nav-mobile-menu');
+
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
+
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+}
+
+const fishCanvas = document.getElementById('fish-canvas')
+const fctx = fishCanvas.getContext('2d')
+let fishW, fishH
+
+function resizeFishCanvas() {
+  fishW = fishCanvas.width  = fishCanvas.offsetWidth
+  fishH = fishCanvas.height = fishCanvas.offsetHeight
+}
+resizeFishCanvas()
+window.addEventListener('resize', resizeFishCanvas)
+
+const FISH_COUNT = 60
+const fishes = Array.from({ length: FISH_COUNT }, () => ({
+  x: Math.random() * 800,
+  y: Math.random() * 400,
+  speed: 0.8 + Math.random() * 0.6,
+  offset: Math.random() * Math.PI * 2,
+  size: 2 + Math.random() * 2.5
+}))
+
+let schoolAngle = 0
+let targetAngle = 0
+let angleTimer   = 0
+
+function drawFish(ctx, x, y, size, angle) {
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.rotate(angle)
+  ctx.beginPath()
+  ctx.ellipse(0, 0, size * 2, size * 0.8, 0, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(186, 230, 253, 0.55)'
+  ctx.fill()
+  ctx.beginPath()
+  ctx.moveTo(-size * 2, 0)
+  ctx.lineTo(-size * 3.2, -size)
+  ctx.lineTo(-size * 3.2, size)
+  ctx.closePath()
+  ctx.fillStyle = 'rgba(186, 230, 253, 0.4)'
+  ctx.fill()
+  ctx.restore()
+}
+
+function animateFish(t) {
+  requestAnimationFrame(animateFish)
+  if (!fishW) return
+  fctx.clearRect(0, 0, fishW, fishH)
+
+  angleTimer++
+  if (angleTimer > 180) {
+    targetAngle = (Math.random() - 0.5) * Math.PI * 0.6
+    angleTimer  = 0
+  }
+  schoolAngle += (targetAngle - schoolAngle) * 0.008
+
+  fishes.forEach(f => {
+    f.x += Math.cos(schoolAngle) * f.speed
+    f.y += Math.sin(schoolAngle) * f.speed
+            + Math.sin(t * 0.001 + f.offset) * 0.4
+
+    if (f.x > fishW + 20) f.x = -20
+    if (f.x < -20)        f.x = fishW + 20
+    if (f.y > fishH + 20) f.y = -20
+    if (f.y < -20)        f.y = fishH + 20
+
+    drawFish(fctx, f.x, f.y, f.size, schoolAngle)
+  })
+}
+requestAnimationFrame(animateFish)
+
+
+const sonarCanvas = document.getElementById('sonar-canvas')
+const sctx = sonarCanvas.getContext('2d')
+let sonarW, sonarH
+const pings = []
+
+function resizeSonar() {
+  sonarW = sonarCanvas.width  = sonarCanvas.offsetWidth
+  sonarH = sonarCanvas.height = sonarCanvas.offsetHeight
+}
+resizeSonar()
+window.addEventListener('resize', resizeSonar)
+
+document.getElementById('hadal').addEventListener('click', e => {
+  const rect = sonarCanvas.getBoundingClientRect()
+  pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1 })
+  pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 12 })
+  pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 24 })
+})
+
+function animateSonar() {
+  requestAnimationFrame(animateSonar)
+  sctx.clearRect(0, 0, sonarW, sonarH)
+
+  for (let i = pings.length - 1; i >= 0; i--) {
+    const p = pings[i]
+    if (p.delay > 0) { p.delay--; continue }
+
+    p.r    += 2.5
+    p.life -= 0.012
+
+    if (p.life <= 0) { pings.splice(i, 1); continue }
+
+    sctx.beginPath()
+    sctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+    sctx.strokeStyle = `rgba(52, 211, 153, ${p.life * 0.7})`
+    sctx.lineWidth   = 1.5
+    sctx.stroke()
+
+    sctx.beginPath()
+    sctx.arc(p.x, p.y, 4, 0, Math.PI * 2)
+    sctx.fillStyle = `rgba(52, 211, 153, ${p.life})`
+    sctx.fill()
+  }
+}
+animateSonar()
+
+
+
 });

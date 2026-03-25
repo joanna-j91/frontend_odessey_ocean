@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,9 +8,11 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="visuals.css" />
   <link rel="stylesheet" href="scroll.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
+
 <body>
-    <div id="cursor" class="custom-cursor"></div>
+  <div id="cursor" class="custom-cursor"></div>
 
   <div id="loader" class="loader">
     <div class="loader__bubbles">
@@ -30,15 +33,28 @@
     <div class="nav__depth-indicator">
       <span id="depth-label">0m</span>
     </div>
+    <button class="nav__hamburger" id="nav-hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="nav__mobile-menu" id="nav-mobile-menu">
+      <a href="#surface" onclick="closeMobileMenu()">Surface</a>
+      <a href="#sunlight" onclick="closeMobileMenu()">Sunlight</a>
+      <a href="#twilight" onclick="closeMobileMenu()">Twilight</a>
+      <a href="#midnight" onclick="closeMobileMenu()">Midnight</a>
+      <a href="#hadal" onclick="closeMobileMenu()">Hadal</a>
+    </div>
   </nav>
 
   <div class="depth-bar">
     <div class="depth-bar__fill" id="depth-fill"></div>
   </div>
 
+
   <section id="surface" class="zone zone--surface" data-depth="0m">
     <div class="zone__bg-layer zone__bg-layer--1"></div>
     <div class="zone__bg-layer zone__bg-layer--2"></div>
+
     <div class="zone__content">
       <div class="zone__eyebrow reveal">Zone 1 · 0 — 20m</div>
       <h1 class="zone__title reveal reveal--delay-1">The Surface</h1>
@@ -51,8 +67,12 @@
     <div class="zone__deco zone__deco--waves" aria-hidden="true"></div>
   </section>
 
+
   <section id="sunlight" class="zone zone--sunlight" data-depth="200m">
     <div class="zone__bg-layer zone__bg-layer--1"></div>
+
+    <canvas id="fish-canvas"></canvas>
+
     <div class="zone__content">
       <div class="zone__eyebrow reveal">Zone 2 · 20 — 200m</div>
       <h2 class="zone__title reveal reveal--delay-1">Sunlight Zone</h2>
@@ -64,9 +84,9 @@
     </div>
     <div class="creatures" id="creatures-sunlight">
       <div class="floating-creatures" aria-hidden="true">
-          <span class="floater" style="--x:15%;--delay:0s">🐟</span>
-          <span class="floater" style="--x:70%;--delay:2s">🐡</span>
-          <span class="floater" style="--x:40%;--delay:4s">🦑</span>
+        <span class="floater" style="--x:15%;--delay:0s">🐟</span>
+        <span class="floater" style="--x:70%;--delay:2s">🐡</span>
+        <span class="floater" style="--x:40%;--delay:4s">🦑</span>
       </div>
       <div class="creature-card" data-creature="clownfish">
         <div class="creature-card__icon">🐠</div>
@@ -119,6 +139,9 @@
   <section id="midnight" class="zone zone--midnight" data-depth="4000m">
     <canvas id="deep-canvas"></canvas>
     <div class="zone__bg-layer zone__bg-layer--1"></div>
+
+    
+
     <div class="zone__content">
       <div class="zone__eyebrow reveal">Zone 4 · 1,000 — 4,000m</div>
       <h2 class="zone__title reveal reveal--delay-1">Midnight Zone</h2>
@@ -135,6 +158,9 @@
 
   <section id="hadal" class="zone zone--hadal" data-depth="11000m">
     <div class="zone__bg-layer zone__bg-layer--1"></div>
+
+    <canvas id="sonar-canvas"></canvas>
+
     <div class="zone__content zone__content--center">
       <div class="zone__eyebrow reveal">Zone 5 · 6,000 — 11,000m</div>
       <h2 class="zone__title reveal reveal--delay-1">The Hadal Zone</h2>
@@ -156,6 +182,8 @@
     <p>Built for Frontend Odyssey · Ocean Depths Theme</p>
   </footer>
 
+  <script type="module" src="liquid.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
