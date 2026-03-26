@@ -408,6 +408,72 @@ function animateSonar() {
 }
 animateSonar()
 
+const midnightSection = document.getElementById('midnight')
+const trailCanvas = document.getElementById('trail-canvas')
+const tctx = trailCanvas.getContext('2d')
+const trail = []
+let mouseX = -999, mouseY = -999
 
+function resizeTrail() {
+  trailCanvas.width  = midnightSection.offsetWidth
+  trailCanvas.height = midnightSection.offsetHeight
+}
+resizeTrail()
+window.addEventListener('resize', resizeTrail)
+
+window.addEventListener('mousemove', e => {
+  const rect = midnightSection.getBoundingClientRect()
+  const insideMidnight = (
+    e.clientX >= rect.left &&
+    e.clientX <= rect.right &&
+    e.clientY >= rect.top  &&
+    e.clientY <= rect.bottom
+  )
+
+  if (!insideMidnight) return
+
+  mouseX = e.clientX - rect.left
+  mouseY = e.clientY - rect.top
+
+  for (let i = 0; i < 3; i++) {
+    trail.push({
+      x:     mouseX + (Math.random() - 0.5) * 24,
+      y:     mouseY + (Math.random() - 0.5) * 24,
+      r:     0.8 + Math.random() * 1.8,
+      life:  1,
+      decay: 0.025 + Math.random() * 0.025,
+      hue:   170 + Math.random() * 40
+    })
+  }
+})
+
+function animateTrail() {
+  requestAnimationFrame(animateTrail)
+  tctx.clearRect(0, 0, trailCanvas.width, trailCanvas.height)
+
+  for (let i = trail.length - 1; i >= 0; i--) {
+    const p = trail[i]
+    p.life -= p.decay
+    p.r    *= 0.97
+
+    if (p.life <= 0) { trail.splice(i, 1); continue }
+
+    const grad = tctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3)
+    grad.addColorStop(0,   `hsla(${p.hue}, 90%, 75%, ${p.life})`)
+    grad.addColorStop(0.4, `hsla(${p.hue}, 80%, 60%, ${p.life * 0.5})`)
+    grad.addColorStop(1,   `hsla(${p.hue}, 70%, 50%, 0)`)
+
+    tctx.beginPath()
+    tctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2)
+    tctx.fillStyle = grad
+    tctx.fill()
+
+    tctx.beginPath()
+    tctx.arc(p.x, p.y, p.r * 0.4, 0, Math.PI * 2)
+    tctx.fillStyle = `hsla(${p.hue}, 100%, 92%, ${p.life * 0.9})`
+    tctx.fill()
+  }
+}
+animateTrail()
 
 });
