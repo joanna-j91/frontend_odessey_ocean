@@ -847,7 +847,201 @@ function animateSiphonophore(t) {
 }
 requestAnimationFrame(animateSiphonophore)
 
+const bacCanvas = document.getElementById('bacteria-canvas')
+const bactx     = bacCanvas.getContext('2d')
 
+function resizeBacCanvas() {
+  const hadal       = document.getElementById('hadal')
+  bacCanvas.width   = hadal.offsetWidth
+  bacCanvas.height  = hadal.offsetHeight
+}
+resizeBacCanvas()
+window.addEventListener('resize', resizeBacCanvas)
+
+const blooms = Array.from({ length: 18 }, () => ({
+  x:       Math.random(),
+  y:       Math.random(),
+  r:       40  + Math.random() * 80,
+  phase:   Math.random() * Math.PI * 2,
+  speed:   0.0004 + Math.random() * 0.0006,
+  opacity: 0.03 + Math.random() * 0.05,
+  hue:     140  + Math.random() * 30
+}))
+
+function animateBacteria(t) {
+  requestAnimationFrame(animateBacteria)
+  bactx.clearRect(0, 0, bacCanvas.width, bacCanvas.height)
+
+  blooms.forEach(b => {
+    const pulse = (Math.sin(t * b.speed + b.phase) + 1) / 2
+    const alpha = b.opacity * pulse
+    const x     = b.x * bacCanvas.width
+    const y     = b.y * bacCanvas.height
+
+    const grad = bactx.createRadialGradient(x, y, 0, x, y, b.r * (0.8 + pulse * 0.4))
+    grad.addColorStop(0,   `hsla(${b.hue}, 80%, 55%, ${alpha * 1.2})`)
+    grad.addColorStop(0.4, `hsla(${b.hue}, 70%, 45%, ${alpha * 0.6})`)
+    grad.addColorStop(1,   `hsla(${b.hue}, 60%, 35%, 0)`)
+
+    bactx.beginPath()
+    bactx.arc(x, y, b.r * (0.8 + pulse * 0.4), 0, Math.PI * 2)
+    bactx.fillStyle = grad
+    bactx.fill()
+
+    const dotCount = 6 + Math.floor(pulse * 8)
+    for (let i = 0; i < dotCount; i++) {
+      const angle  = (i / dotCount) * Math.PI * 2 + t * 0.0002
+      const dist   = b.r * 0.3 * pulse + Math.random() * b.r * 0.4
+      const dx     = x + Math.cos(angle) * dist
+      const dy     = y + Math.sin(angle) * dist
+      const dotR   = 0.8 + Math.random() * 1.2
+
+      bactx.beginPath()
+      bactx.arc(dx, dy, dotR, 0, Math.PI * 2)
+      bactx.fillStyle = `hsla(${b.hue}, 90%, 70%, ${alpha * 2})`
+      bactx.fill()
+    }
+  })
+}
+requestAnimationFrame(animateBacteria)
+
+const ampCanvas = document.getElementById('amphipod-canvas')
+const ampCtx    = ampCanvas.getContext('2d')
+let ampMouseX   = -999
+let ampMouseY   = -999
+
+function resizeAmpCanvas() {
+  const hadal      = document.getElementById('hadal')
+  ampCanvas.width  = hadal.offsetWidth
+  ampCanvas.height = hadal.offsetHeight
+}
+resizeAmpCanvas()
+window.addEventListener('resize', resizeAmpCanvas)
+
+document.getElementById('hadal').addEventListener('mousemove', e => {
+  const rect = ampCanvas.getBoundingClientRect()
+  ampMouseX  = e.clientX - rect.left
+  ampMouseY  = e.clientY - rect.top
+})
+
+document.getElementById('hadal').addEventListener('mouseleave', () => {
+  ampMouseX = -999
+  ampMouseY = -999
+})
+
+const AMPHIPOD_COUNT = 60
+const amphipods = Array.from({ length: AMPHIPOD_COUNT }, () => ({
+  x:   Math.random() * 1200,
+  y:   Math.random() * 800,
+  vx:  (Math.random() - 0.5) * 0.4,
+  vy:  (Math.random() - 0.5) * 0.4,
+  size: 2 + Math.random() * 2,
+  angle: Math.random() * Math.PI * 2,
+  scatter: false
+}))
+
+function drawAmphipod(ctx, x, y, size, angle) {
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.rotate(angle)
+  ctx.globalAlpha = 0.55
+
+  ctx.beginPath()
+  ctx.ellipse(0, 0, size * 2.2, size * 0.9, 0, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(52, 211, 153, 1)'
+  ctx.fill()
+
+  for (let i = -2; i <= 2; i++) {
+    ctx.beginPath()
+    ctx.moveTo(i * size * 0.6, -size * 0.7)
+    ctx.lineTo(i * size * 0.6 - size * 0.3, -size * 1.6)
+    ctx.strokeStyle = 'rgba(52, 211, 153, 0.7)'
+    ctx.lineWidth   = 0.6
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(i * size * 0.6, size * 0.7)
+    ctx.lineTo(i * size * 0.6 + size * 0.3, size * 1.6)
+    ctx.stroke()
+  }
+
+  ctx.beginPath()
+  ctx.moveTo(-size * 2.2, 0)
+  ctx.lineTo(-size * 3.5, -size * 0.5)
+  ctx.lineTo(-size * 3.5, size * 0.5)
+  ctx.closePath()
+  ctx.fillStyle = 'rgba(52, 211, 153, 0.6)'
+  ctx.fill()
+
+  ctx.restore()
+  ctx.globalAlpha = 1
+}
+
+function animateAmphipods() {
+  requestAnimationFrame(animateAmphipods)
+  if (!ampCanvas.width) return
+  ampCtx.clearRect(0, 0, ampCanvas.width, ampCanvas.height)
+
+  const SCATTER_RADIUS  = 120
+  const SCATTER_FORCE   = 3.5
+  const COHESION_RADIUS = 200
+  const COHESION_FORCE  = 0.006
+  const MAX_SPEED       = 2.8
+  const IDLE_SPEED      = 0.4
+  const DAMPING         = 0.94
+
+  let cx = 0, cy = 0
+  amphipods.forEach(a => { cx += a.x; cy += a.y })
+  cx /= amphipods.length
+  cy /= amphipods.length
+
+  amphipods.forEach(a => {
+    const dMx = a.x - ampMouseX
+    const dMy = a.y - ampMouseY
+    const distM = Math.sqrt(dMx * dMx + dMy * dMy)
+
+    if (distM < SCATTER_RADIUS && ampMouseX !== -999) {
+      const force = (SCATTER_RADIUS - distM) / SCATTER_RADIUS
+      a.vx += (dMx / distM) * SCATTER_FORCE * force
+      a.vy += (dMy / distM) * SCATTER_FORCE * force
+      a.scatter = true
+    } else {
+      a.scatter = false
+      const dcx  = cx - a.x
+      const dcy  = cy - a.y
+      const dist = Math.sqrt(dcx * dcx + dcy * dcy)
+      if (dist > COHESION_RADIUS) {
+        a.vx += dcx * COHESION_FORCE
+        a.vy += dcy * COHESION_FORCE
+      }
+      a.vx += (Math.random() - 0.5) * 0.08
+      a.vy += (Math.random() - 0.5) * 0.08
+    }
+
+    a.vx *= DAMPING
+    a.vy *= DAMPING
+
+    const speed = Math.sqrt(a.vx * a.vx + a.vy * a.vy)
+    const maxS  = a.scatter ? MAX_SPEED : IDLE_SPEED
+    if (speed > maxS) {
+      a.vx = (a.vx / speed) * maxS
+      a.vy = (a.vy / speed) * maxS
+    }
+
+    a.x += a.vx
+    a.y += a.vy
+
+    if (a.x < 0)               a.x = ampCanvas.width
+    if (a.x > ampCanvas.width)  a.x = 0
+    if (a.y < 0)               a.y = ampCanvas.height
+    if (a.y > ampCanvas.height) a.y = 0
+
+    if (speed > 0.05) a.angle = Math.atan2(a.vy, a.vx)
+
+    drawAmphipod(ampCtx, a.x, a.y, a.size, a.angle)
+  })
+}
+animateAmphipods()
 
 });
 

@@ -89,12 +89,6 @@
 
     <div class="creatures" id="creatures-sunlight">
 
-      <div class="floating-creatures" aria-hidden="true">
-        <span class="floater" style="--x:15%;--delay:0s">🐟</span>
-        <span class="floater" style="--x:70%;--delay:2s">🐡</span>
-        <span class="floater" style="--x:40%;--delay:4s">🦑</span>
-      </div>
-
       <div class="creature-card" data-creature="clownfish" style="--glow-color: #fb923c;">
         <div class="card-design">
           <svg viewBox="0 0 110 110" width="200" height="200">
@@ -292,6 +286,9 @@
   <section id="hadal" class="zone zone--hadal" data-depth="11000m">
     <div class="zone__bg-layer zone__bg-layer--1"></div>
 
+    <canvas id="bacteria-canvas"></canvas>
+    <canvas id="amphipod-canvas"></canvas>
+    
     <canvas id="sonar-canvas"></canvas>
 
     <div class="zone__content zone__content--center">
@@ -333,7 +330,7 @@
   </section>
 
   <footer class="site-footer">
-    <p>Built for Frontend Odyssey · Ocean Depths Theme</p>
+    <p>Built for Frontend Odyssey by Joanna Jacob</p>
   </footer>
 
   <script type="module" src="liquid.js"></script>
