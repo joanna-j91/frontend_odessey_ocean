@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ocean Depths — An Interactive Journey</title>
+  <title>Ocean Depths</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="visuals.css" />
   <link rel="stylesheet" href="scroll.css" />
@@ -81,6 +81,10 @@
         cities. Schools of fish shimmer like silver ribbons. Life here is
         abundant, colorful, and electric.
       </p>
+    </div>
+
+    <div class="fish-hint" id="fish-hint">
+      <span>the fishies follow your cursor!</span>
     </div>
 
     <div class="creatures" id="creatures-sunlight">
@@ -208,9 +212,10 @@
   </section>
 
   <section id="twilight" class="zone zone--twilight" data-depth="1000m">
-
     <div class="zone__bg-layer zone__bg-layer--1"></div>
 
+    <canvas id="siphonophore-canvas"></canvas>
+    
     <div class="zone__content">
       <div class="zone__eyebrow reveal">Zone 3 · 200 — 1,000m</div>
       <h2 class="zone__title reveal reveal--delay-1">Twilight Zone</h2>
@@ -251,10 +256,29 @@
     <div class="zone__bg-layer zone__bg-layer--1"></div>
 
     <div class="zone__content">
+
+      <div class="zone-hints zone-hints--midnight">
+        <div class="zone-hint zone-hint--sound">
+          <span class="zone-hint__icon">⊙</span>
+          <span class="zone-hint__text">Turn sound on!!</span>
+        </div>
+        <div class="zone-hint zone-hint--click">
+          <span class="zone-hint__icon">⊙</span>
+          <span class="zone-hint__text">Your cursor leaves a bioluminescent trail O.O</span>
+        </div>
+        <div class="zone-hint zone-hint--echo">
+          <span class="zone-hint__icon">⊙</span>
+          <span class="zone-hint__text">click "echolocate"</span>
+        </div>
+      </div>
+
       <button class="echo-btn" id="echo-btn" aria-label="Send echolocation pulse">
         ◉ ECHOLOCATE
       </button>
 
+      <div class="echo-canvas-wrap">
+
+      </div>
       <div class="zone__eyebrow reveal">Zone 4 · 1,000 — 4,000m</div>
       <h2 class="zone__title reveal reveal--delay-1">Midnight Zone</h2>
       <p class="zone__body reveal reveal--delay-2">
@@ -271,6 +295,26 @@
     <canvas id="sonar-canvas"></canvas>
 
     <div class="zone__content zone__content--center">
+      <div class="zone-hints">
+        <div class="zone-hint zone-hint--sound">
+          <span class="zone-hint__icon">⊙</span>
+          <span class="zone-hint__text">Turn sound on!!</span>
+        </div>
+        <div class="zone-hint zone-hint--click">
+          <span class="zone-hint__icon">⊙</span>
+          <span class="zone-hint__text">Click anywhere!</span>
+        </div>
+        <div class="zone-hint zone-hint--freq">
+          <span class="zone-hint__icon">⊙</span>
+          <span class="zone-hint__text">Try varying your clicks horizontally</span>
+        </div>
+        <div class="zone-hint zone-hint--vol">
+          <span class="zone-hint__icon">⊙</span>
+          <span class="zone-hint__text">Try varying your clicks vertically</span>
+        </div>
+      </div>
+
+
       <div class="zone__eyebrow reveal">Zone 5 · 6,000 — 11,000m</div>
       <h2 class="zone__title reveal reveal--delay-1">The Hadal Zone</h2>
       <p class="zone__body reveal reveal--delay-2">

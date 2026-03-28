@@ -733,5 +733,121 @@ echoBtn.addEventListener('click', () => {
   }
 })
 
+
+const hintObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const hints = entry.target.querySelectorAll('.zone-hint')
+      hints.forEach((hint, i) => {
+        setTimeout(() => hint.classList.add('visible'), i * 150)
+      })
+      hintObserver.unobserve(entry.target)
+    }
+  })
+}, { threshold: 0.3 })
+
+document.querySelectorAll('.zone-hints').forEach(el => hintObserver.observe(el))
+
+
+const fishHintObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      document.getElementById('fish-hint').classList.add('visible')
+      fishHintObserver.disconnect()
+    }
+  })
+}, { threshold: 0.4 })
+
+const fishHintEl = document.getElementById('fish-hint')
+if (fishHintEl) fishHintObserver.observe(document.getElementById('sunlight'))
+
+const siphoCanvas = document.getElementById('siphonophore-canvas')
+const sctxS = siphoCanvas.getContext('2d')
+
+function resizeSipho() {
+  siphoCanvas.width  = siphoCanvas.offsetWidth
+  siphoCanvas.height = siphoCanvas.offsetHeight
+}
+resizeSipho()
+window.addEventListener('resize', resizeSipho)
+
+const siphonophores = Array.from({ length: 6 }, (_, i) => ({
+  x:       -400 + i * 600,
+  y:       80 + i * 120,
+  speed:   0.18 + i * 0.06,
+  offset:  i * 2.1,
+  length:  260 + i * 60,
+  nodes:   18 + i * 4,
+  opacity: 0.18 + i * 0.04,
+  dir:     i % 2 === 0 ? 1 : -1
+}))
+
+function drawSiphonophore(ctx, s, t) {
+  const points = []
+  for (let i = 0; i <= s.nodes; i++) {
+    const pct  = i / s.nodes
+    const px   = s.x + pct * s.length * s.dir
+    const wave1 = Math.sin(t * 0.0008 + pct * 6 + s.offset) * 18
+    const wave2 = Math.sin(t * 0.0005 + pct * 3 + s.offset + 1) * 10
+    const py   = s.y + wave1 + wave2
+    points.push({ x: px, y: py })
+  }
+
+  ctx.save()
+  ctx.globalAlpha = s.opacity
+
+  ctx.beginPath()
+  ctx.moveTo(points[0].x, points[0].y)
+  for (let i = 1; i < points.length - 1; i++) {
+    const mx = (points[i].x + points[i + 1].x) / 2
+    const my = (points[i].y + points[i + 1].y) / 2
+    ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my)
+  }
+  ctx.strokeStyle = 'rgba(129, 140, 248, 1)'
+  ctx.lineWidth   = 1.5
+  ctx.stroke()
+
+  points.forEach((p, i) => {
+    if (i % 2 === 0) {
+      const bulge = 3 + Math.sin(t * 0.001 + i * 0.5) * 1.5
+      ctx.beginPath()
+      ctx.arc(p.x, p.y, bulge, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(196, 181, 253, 1)'
+      ctx.fill()
+
+      const tentLen = 12 + Math.sin(t * 0.002 + i) * 6
+      const tentX   = p.x + Math.sin(t * 0.001 + i * 0.8) * 4
+      ctx.beginPath()
+      ctx.moveTo(p.x, p.y)
+      ctx.bezierCurveTo(
+        tentX + 4,  p.y + tentLen * 0.4,
+        tentX - 4,  p.y + tentLen * 0.7,
+        tentX,      p.y + tentLen
+      )
+      ctx.strokeStyle = 'rgba(165, 243, 252, 0.5)'
+      ctx.lineWidth   = 0.8
+      ctx.stroke()
+    }
+  })
+
+  ctx.restore()
+  ctx.globalAlpha = 1
+}
+
+function animateSiphonophore(t) {
+  requestAnimationFrame(animateSiphonophore)
+  sctxS.clearRect(0, 0, siphoCanvas.width, siphoCanvas.height)
+
+  siphonophores.forEach(s => {
+    s.x += s.speed * s.dir
+    if (s.dir === 1  && s.x > siphoCanvas.width  + 100) s.x = -s.length - 100
+    if (s.dir === -1 && s.x < -s.length - 100)          s.x = siphoCanvas.width + 100
+    drawSiphonophore(sctxS, s, t)
+  })
+}
+requestAnimationFrame(animateSiphonophore)
+
+
+
 });
 
