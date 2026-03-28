@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
 
   const loader = document.getElementById('loader');
@@ -285,222 +284,136 @@ document.addEventListener('DOMContentLoaded', () => {
         life: 1,
         r, g, b
       });
-    }
-  });
-
-  const hamburger = document.getElementById('nav-hamburger');
-  const mobileMenu = document.getElementById('nav-mobile-menu');
-
-  hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('open');
-  });
-
-  function closeMobileMenu() {
-    mobileMenu.classList.remove('open');
   }
+});
 
-  const fishCanvas = document.getElementById('fish-canvas')
-  const fctx = fishCanvas.getContext('2d')
-  let fishW, fishH
+const hamburger  = document.getElementById('nav-hamburger');
+const mobileMenu = document.getElementById('nav-mobile-menu');
 
-  function resizeFishCanvas() {
-    fishW = fishCanvas.width = fishCanvas.offsetWidth
-    fishH = fishCanvas.height = fishCanvas.offsetHeight
-  }
-  resizeFishCanvas()
-  window.addEventListener('resize', resizeFishCanvas)
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
 
-  const FISH_COUNT = 60
-  const fishes = Array.from({ length: FISH_COUNT }, () => ({
-    x: Math.random() * 800,
-    y: Math.random() * 400,
-    speed: 0.8 + Math.random() * 0.6,
-    offset: Math.random() * Math.PI * 2,
-    size: 2 + Math.random() * 2.5
-  }))
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+}
 
-  let schoolAngle = 0
-  let targetAngle = 0
-  let fishMouseX = null
-  let fishMouseY = null
-  let angleTimer = 0
+const fishCanvas = document.getElementById('fish-canvas')
+const fctx = fishCanvas.getContext('2d')
+let fishW, fishH
 
-  document.getElementById('sunlight').addEventListener('mousemove', e => {
-    const rect = fishCanvas.getBoundingClientRect()
-    fishMouseX = e.clientX - rect.left
-    fishMouseY = e.clientY - rect.top
-  })
+function resizeFishCanvas() {
+  fishW = fishCanvas.width  = fishCanvas.offsetWidth
+  fishH = fishCanvas.height = fishCanvas.offsetHeight
+}
+resizeFishCanvas()
+window.addEventListener('resize', resizeFishCanvas)
 
-  document.getElementById('sunlight').addEventListener('mouseleave', () => {
-    fishMouseX = null
-    fishMouseY = null
-  })
+const FISH_COUNT = 60
+const fishes = Array.from({ length: FISH_COUNT }, () => ({
+  x: Math.random() * 800,
+  y: Math.random() * 400,
+  speed: 0.8 + Math.random() * 0.6,
+  offset: Math.random() * Math.PI * 2,
+  size: 2 + Math.random() * 2.5
+}))
 
-  function drawFish(ctx, x, y, size, angle) {
-    ctx.save()
-    ctx.translate(x, y)
-    ctx.rotate(angle)
-    ctx.beginPath()
-    ctx.ellipse(0, 0, size * 2, size * 0.8, 0, 0, Math.PI * 2)
-    ctx.fillStyle = 'rgba(186, 230, 253, 0.55)'
-    ctx.fill()
-    ctx.beginPath()
-    ctx.moveTo(-size * 2, 0)
-    ctx.lineTo(-size * 3.2, -size)
-    ctx.lineTo(-size * 3.2, size)
-    ctx.closePath()
-    ctx.fillStyle = 'rgba(186, 230, 253, 0.4)'
-    ctx.fill()
-    ctx.restore()
-  }
+let schoolAngle = 0
+let targetAngle = 0
+let angleTimer   = 0
 
-  function animateFish(t) {
-    requestAnimationFrame(animateFish)
-    if (!fishW) return
-    fctx.clearRect(0, 0, fishW, fishH)
+function drawFish(ctx, x, y, size, angle) {
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.rotate(angle)
+  ctx.beginPath()
+  ctx.ellipse(0, 0, size * 2, size * 0.8, 0, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(186, 230, 253, 0.55)'
+  ctx.fill()
+  ctx.beginPath()
+  ctx.moveTo(-size * 2, 0)
+  ctx.lineTo(-size * 3.2, -size)
+  ctx.lineTo(-size * 3.2, size)
+  ctx.closePath()
+  ctx.fillStyle = 'rgba(186, 230, 253, 0.4)'
+  ctx.fill()
+  ctx.restore()
+}
 
-    if (fishMouseX !== null && fishMouseY !== null) {
-      const centerX = fishW / 2
-      const centerY = fishH / 2
-      targetAngle = Math.atan2(fishMouseY - centerY, fishMouseX - centerX)
-    } else {
-      angleTimer++
-      if (angleTimer > 180) {
-        targetAngle = (Math.random() - 0.5) * Math.PI * 0.6
-        angleTimer = 0
-      }
-    }
-
-    schoolAngle += (targetAngle - schoolAngle) * 0.04
-
-    fishes.forEach(f => {
-      f.x += Math.cos(schoolAngle) * f.speed
-      f.y += Math.sin(schoolAngle) * f.speed
-        + Math.sin(t * 0.001 + f.offset) * 0.4
-
-      if (f.x > fishW + 20) f.x = -20
-      if (f.x < -20) f.x = fishW + 20
-      if (f.y > fishH + 20) f.y = -20
-      if (f.y < -20) f.y = fishH + 20
-
-      drawFish(fctx, f.x, f.y, f.size, schoolAngle)
-    })
-  }
+function animateFish(t) {
   requestAnimationFrame(animateFish)
+  if (!fishW) return
+  fctx.clearRect(0, 0, fishW, fishH)
 
-
-  const sonarCanvas = document.getElementById('sonar-canvas')
-  const sctx = sonarCanvas.getContext('2d')
-  let sonarW, sonarH
-  const pings = []
-
-  function resizeSonar() {
-    sonarW = sonarCanvas.width = sonarCanvas.offsetWidth
-    sonarH = sonarCanvas.height = sonarCanvas.offsetHeight
+  angleTimer++
+  if (angleTimer > 180) {
+    targetAngle = (Math.random() - 0.5) * Math.PI * 0.6
+    angleTimer  = 0
   }
-  resizeSonar()
-  window.addEventListener('resize', resizeSonar)
+  schoolAngle += (targetAngle - schoolAngle) * 0.008
 
-  document.getElementById('hadal').addEventListener('click', e => {
-    const rect = sonarCanvas.getBoundingClientRect()
-    pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1 })
-    pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 12 })
-    pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 24 })
+  fishes.forEach(f => {
+    f.x += Math.cos(schoolAngle) * f.speed
+    f.y += Math.sin(schoolAngle) * f.speed
+            + Math.sin(t * 0.001 + f.offset) * 0.4
+
+    if (f.x > fishW + 20) f.x = -20
+    if (f.x < -20)        f.x = fishW + 20
+    if (f.y > fishH + 20) f.y = -20
+    if (f.y < -20)        f.y = fishH + 20
+
+    drawFish(fctx, f.x, f.y, f.size, schoolAngle)
   })
+}
+requestAnimationFrame(animateFish)
 
-  function animateSonar() {
-    requestAnimationFrame(animateSonar)
-    sctx.clearRect(0, 0, sonarW, sonarH)
 
-    for (let i = pings.length - 1; i >= 0; i--) {
-      const p = pings[i]
-      if (p.delay > 0) { p.delay--; continue }
+const sonarCanvas = document.getElementById('sonar-canvas')
+const sctx = sonarCanvas.getContext('2d')
+let sonarW, sonarH
+const pings = []
 
-      p.r += 2.5
-      p.life -= 0.012
+function resizeSonar() {
+  sonarW = sonarCanvas.width  = sonarCanvas.offsetWidth
+  sonarH = sonarCanvas.height = sonarCanvas.offsetHeight
+}
+resizeSonar()
+window.addEventListener('resize', resizeSonar)
 
-      if (p.life <= 0) { pings.splice(i, 1); continue }
+document.getElementById('hadal').addEventListener('click', e => {
+  const rect = sonarCanvas.getBoundingClientRect()
+  pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1 })
+  pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 12 })
+  pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 24 })
+})
 
-      sctx.beginPath()
-      sctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-      sctx.strokeStyle = `rgba(52, 211, 153, ${p.life * 0.7})`
-      sctx.lineWidth = 1.5
-      sctx.stroke()
+function animateSonar() {
+  requestAnimationFrame(animateSonar)
+  sctx.clearRect(0, 0, sonarW, sonarH)
 
-      sctx.beginPath()
-      sctx.arc(p.x, p.y, 4, 0, Math.PI * 2)
-      sctx.fillStyle = `rgba(52, 211, 153, ${p.life})`
-      sctx.fill()
-    }
+  for (let i = pings.length - 1; i >= 0; i--) {
+    const p = pings[i]
+    if (p.delay > 0) { p.delay--; continue }
+
+    p.r    += 2.5
+    p.life -= 0.012
+
+    if (p.life <= 0) { pings.splice(i, 1); continue }
+
+    sctx.beginPath()
+    sctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+    sctx.strokeStyle = `rgba(52, 211, 153, ${p.life * 0.7})`
+    sctx.lineWidth   = 1.5
+    sctx.stroke()
+
+    sctx.beginPath()
+    sctx.arc(p.x, p.y, 4, 0, Math.PI * 2)
+    sctx.fillStyle = `rgba(52, 211, 153, ${p.life})`
+    sctx.fill()
   }
-  animateSonar()
+}
+animateSonar()
 
-  const midnightSection = document.getElementById('midnight')
-  const trailCanvas = document.getElementById('trail-canvas')
-  const tctx = trailCanvas.getContext('2d')
-  const trail = []
-  let mouseX = -999, mouseY = -999
 
-  function resizeTrail() {
-    trailCanvas.width = midnightSection.offsetWidth
-    trailCanvas.height = midnightSection.offsetHeight
-  }
-  resizeTrail()
-  window.addEventListener('resize', resizeTrail)
-
-  window.addEventListener('mousemove', e => {
-    const rect = midnightSection.getBoundingClientRect()
-    const insideMidnight = (
-      e.clientX >= rect.left &&
-      e.clientX <= rect.right &&
-      e.clientY >= rect.top &&
-      e.clientY <= rect.bottom
-    )
-
-    if (!insideMidnight) return
-
-    mouseX = e.clientX - rect.left
-    mouseY = e.clientY - rect.top
-
-    for (let i = 0; i < 3; i++) {
-      trail.push({
-        x: mouseX + (Math.random() - 0.5) * 24,
-        y: mouseY + (Math.random() - 0.5) * 24,
-        r: 0.8 + Math.random() * 1.8,
-        life: 1,
-        decay: 0.025 + Math.random() * 0.025,
-        hue: 170 + Math.random() * 40
-      })
-    }
-  })
-
-  function animateTrail() {
-    requestAnimationFrame(animateTrail)
-    tctx.clearRect(0, 0, trailCanvas.width, trailCanvas.height)
-
-    for (let i = trail.length - 1; i >= 0; i--) {
-      const p = trail[i]
-      p.life -= p.decay
-      p.r *= 0.97
-
-      if (p.life <= 0) { trail.splice(i, 1); continue }
-
-      const grad = tctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3)
-      grad.addColorStop(0, `hsla(${p.hue}, 90%, 75%, ${p.life})`)
-      grad.addColorStop(0.4, `hsla(${p.hue}, 80%, 60%, ${p.life * 0.5})`)
-      grad.addColorStop(1, `hsla(${p.hue}, 70%, 50%, 0)`)
-
-      tctx.beginPath()
-      tctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2)
-      tctx.fillStyle = grad
-      tctx.fill()
-
-      tctx.beginPath()
-      tctx.arc(p.x, p.y, p.r * 0.4, 0, Math.PI * 2)
-      tctx.fillStyle = `hsla(${p.hue}, 100%, 92%, ${p.life * 0.9})`
-      tctx.fill()
-    }
-  }
-  animateTrail()
 
 });
