@@ -119,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     parallaxLayers.forEach(layer => {
       const section = layer.closest('.zone');
       if (!section) return;
-      if (section.id === 'sunlight') return;  
 
       const rect    = section.getBoundingClientRect();
       const sectionH = section.offsetHeight;
@@ -223,7 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const cursor = document.getElementById('cursor');
   document.addEventListener('mousemove', e => {
-    cursor.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
   });
 
   document.querySelectorAll('a, button, .creature-card, .biolumin-canvas').forEach(el => {
