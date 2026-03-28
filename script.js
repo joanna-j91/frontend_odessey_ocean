@@ -401,11 +401,55 @@ document.addEventListener('DOMContentLoaded', () => {
   resizeSonar()
   window.addEventListener('resize', resizeSonar)
 
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+
   document.getElementById('hadal').addEventListener('click', e => {
     const rect = sonarCanvas.getBoundingClientRect()
-    pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1 })
-    pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 12 })
-    pings.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, r: 0, life: 1, delay: 24 })
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    pings.push({ x, y, r: 0, life: 1 })
+    pings.push({ x, y, r: 0, life: 1, delay: 12 })
+    pings.push({ x, y, r: 0, life: 1, delay: 24 })
+
+    if (audioCtx.state === 'suspended') audioCtx.resume()
+
+    const frequency = 80 + (x / sonarW) * 320
+    const volume = 0.08 + (1 - y / sonarH) * 0.25
+
+    const osc = audioCtx.createOscillator()
+    const gainNode = audioCtx.createGain()
+    const convolver = audioCtx.createConvolver()
+
+    const bufferSize = audioCtx.sampleRate * 3
+    const buffer = audioCtx.createBuffer(2, bufferSize, audioCtx.sampleRate)
+    for (let ch = 0; ch < 2; ch++) {
+      const data = buffer.getChannelData(ch)
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2)
+      }
+    }
+    convolver.buffer = buffer
+
+    const wetGain = audioCtx.createGain()
+    wetGain.gain.value = 0.4
+
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(frequency, audioCtx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(frequency * 0.3, audioCtx.currentTime + 2)
+
+    gainNode.gain.setValueAtTime(volume, audioCtx.currentTime)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5)
+
+    osc.connect(gainNode)
+    gainNode.connect(audioCtx.destination)
+
+    gainNode.connect(convolver)
+    convolver.connect(wetGain)
+    wetGain.connect(audioCtx.destination)
+
+    osc.start(audioCtx.currentTime)
+    osc.stop(audioCtx.currentTime + 2.5)
   })
 
   function animateSonar() {
