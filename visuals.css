@@ -237,7 +237,7 @@
     );
 }
 
-.creature-card::after {
+/* .creature-card::after {
   content: '';
   position: absolute;
   top: -60%;
@@ -263,7 +263,7 @@
   filter: drop-shadow(0 0 12px rgba(56,189,248,0.6));
   transform: scale(1.12);
   transition: transform 0.3s var(--ease-water), filter 0.3s var(--ease-water);
-}
+} */
 
 .creature-card__icon {
   transition: transform 0.3s var(--ease-water), filter 0.3s var(--ease-water);

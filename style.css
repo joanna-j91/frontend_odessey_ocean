@@ -281,48 +281,145 @@ img, svg { display: block; max-width: 100%; }
   gap: 1.5rem;
   flex-wrap: wrap;
   margin-top: 3rem;
+  padding-top: 220px;
   position: relative;
   z-index: 2;
   max-width: var(--max-width);
   margin-left: auto;
   margin-right: auto;
+  overflow: visible;
 }
 
 .creature-card {
   flex: 1 1 220px;
-  padding: 2rem 1.5rem;
-  background: rgba(7, 89, 133, 0.3);
-  border: 1px solid rgba(56, 189, 248, 0.15);
+  position: relative;
   cursor: pointer;
-  transition: all var(--transition-base);
+  overflow: visible;
+  border-radius: 16px;
+}
+
+.creature-card__inner {
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(186, 230, 253, 0.1);
+  background: rgba(5, 20, 40, 0.45);
+  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
   position: relative;
   overflow: hidden;
 }
 
-.creature-card::before {
+.creature-card__inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,255,255,0.01) 50%,
+    rgba(255,255,255,0.04) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.creature-card__inner::after {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-water-mid), transparent);
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.3) 30%,
+    rgba(255,255,255,0.5) 50%,
+    rgba(255,255,255,0.3) 70%,
+    transparent 100%
+  );
   opacity: 0;
-  transition: opacity var(--transition-base);
+  transition: opacity 0.5s ease;
 }
 
-.creature-card:hover { background: rgba(7, 89, 133, 0.5); transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.35); }
-.creature-card:hover::before { opacity: 1; }
+.creature-card:hover .creature-card__inner {
+  background: rgba(14, 42, 71, 0.35);
+  border-color: rgba(186, 230, 253, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(186, 230, 253, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
 
-.creature-card__icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+.creature-card:hover .creature-card__inner::before { opacity: 1; }
+.creature-card:hover .creature-card__inner::after  { opacity: 1; }
+
+.creature-card__icon {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.creature-card:hover .creature-card__icon {
+  transform: scale(1.1);
+}
 
 .creature-card h3 {
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--color-water-light);
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--color-foam);
   margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
 }
 
-.creature-card p { font-size: 0.78rem; line-height: 1.7; color: var(--color-text-muted); }
+.creature-card p {
+  font-size: 0.78rem;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
+.card-design {
+  position: absolute;
+  top: -180px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 10;
+  filter: none;
+}
+
+.creature-card:hover .card-design {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+.creature-card[data-creature="clownfish"] .card-design svg {
+  animation: svg-bob 3s ease-in-out infinite;
+}
+
+.creature-card[data-creature="turtle"] .card-design svg {
+  animation: svg-bob 5s ease-in-out infinite;
+}
+
+.creature-card[data-creature="shark"] .card-design svg {
+  animation: svg-swim 4s ease-in-out infinite;
+}
+
+@keyframes svg-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%       { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes svg-swim {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  33%       { transform: translateX(8px) rotate(2deg); }
+  66%       { transform: translateX(-6px) rotate(-2deg); }
+}
 
 .stats-row {
   display: flex;
