@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="visuals.css" />
   <link rel="stylesheet" href="scroll.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzicato/0.6.4/Pizzicato.min.js"></script>
 </head>
 
 <body>
@@ -209,7 +208,9 @@
   </section>
 
   <section id="twilight" class="zone zone--twilight" data-depth="1000m">
+
     <div class="zone__bg-layer zone__bg-layer--1"></div>
+
     <div class="zone__content">
       <div class="zone__eyebrow reveal">Zone 3 · 200 — 1,000m</div>
       <h2 class="zone__title reveal reveal--delay-1">Twilight Zone</h2>
@@ -244,9 +245,16 @@
     <canvas id="trail-canvas"></canvas>
 
     <canvas id="deep-canvas"></canvas>
+
+    <canvas id="echo-canvas"></canvas>
+
     <div class="zone__bg-layer zone__bg-layer--1"></div>
 
     <div class="zone__content">
+      <button class="echo-btn" id="echo-btn" aria-label="Send echolocation pulse">
+        ◉ ECHOLOCATE
+      </button>
+
       <div class="zone__eyebrow reveal">Zone 4 · 1,000 — 4,000m</div>
       <h2 class="zone__title reveal reveal--delay-1">Midnight Zone</h2>
       <p class="zone__body reveal reveal--delay-2">
@@ -254,9 +262,6 @@
         these waters. Here, life creates its own light. Bioluminescence flickers
         like a starfield turned inside-out.
       </p>
-    </div>
-    <div class="biolumin-canvas" id="biolumin-canvas" aria-label="Click to create bioluminescent glow">
-      <p class="biolumin-canvas__hint">Click anywhere to create light</p>
     </div>
   </section>
 

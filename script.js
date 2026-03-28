@@ -268,26 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   drawOrbs();
 
-  const biluminCanvas = document.getElementById('biolumin-canvas');
-  const hint = biluminCanvas.querySelector('.biolumin-canvas__hint');
-  biluminCanvas.addEventListener('click', e => {
-    if (hint) hint.style.opacity = '0';
-    const rect = biluminCanvas.getBoundingClientRect();
-    const colors = [
-      [52, 211, 153], [165, 243, 252], [56, 189, 248], [167, 243, 208]
-    ];
-    for (let i = 0; i < 6; i++) {
-      const [r, g, b] = colors[Math.floor(Math.random() * colors.length)];
-      orbs.push({
-        x: e.clientX - rect.left + (Math.random() - 0.5) * 40,
-        y: e.clientY - rect.top + (Math.random() - 0.5) * 40,
-        radius: Math.random() * 8 + 4,
-        life: 1,
-        r, g, b
-      });
-    }
-  });
-
   const hamburger = document.getElementById('nav-hamburger');
   const mobileMenu = document.getElementById('nav-mobile-menu');
 
@@ -547,4 +527,211 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   animateTrail()
 
+
+const echoCanvas = document.getElementById('echo-canvas')
+const ectx       = echoCanvas.getContext('2d')
+const echoBtn    = document.getElementById('echo-btn')
+
+function resizeEchoCanvas() {
+  const midnight = document.getElementById('midnight')
+  const rect = midnight.getBoundingClientRect()
+
+  echoCanvas.style.top    = '0'
+  echoCanvas.style.left   = '0'
+  echoCanvas.width  = rect.width
+  echoCanvas.height = rect.height
+
+  echoCanvas.style.width  = rect.width + 'px'
+  echoCanvas.style.height = rect.height + 'px'
+
+  
+}
+
+
+resizeEchoCanvas()
+window.addEventListener('resize', resizeEchoCanvas)
+
+let echoActive   = false
+let echoProgress = 0
+let echoFishes   = []
+let echoJellies  = []
+let echoAlpha    = 0
+let echoFading   = false
+
+function spawnEchoCreatures() {
+  const w = echoCanvas.width
+  const h = echoCanvas.height
+
+  echoFishes = Array.from({ length: 100 }, (_, i) => ({
+    x:      Math.random() * w,
+    y:      (i / 120) * h + Math.random() * (h / 120),
+    speed:  0.4 + Math.random() * 0.4,
+    offset: Math.random() * Math.PI * 2,
+    size:   1.2 + Math.random() * 1.5,
+    group:  Math.floor(Math.random() * 3)
+  }))
+
+  echoJellies = Array.from({ length: 20 }, (_, i) => ({
+    x:      Math.random() * w,
+    y:      (i / 20) * h + Math.random() * (h / 20),
+    size:   12 + Math.random() * 14,
+    speed:  0.1 + Math.random() * 0.12,
+    wobble: Math.random() * Math.PI * 2,
+    pulse:  Math.random() * Math.PI * 2,
+    drift:  (Math.random() - 0.5) * 0.3
+  }))
+}
+
+const echoGroupAngles  = [0, 0, 0]
+const echoGroupTargets = [0, 0, 0]
+const echoGroupTimers  = [0, 0, 0]
+
+function drawEchoFish(ctx, x, y, size, angle, alpha) {
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.rotate(angle)
+  ctx.globalAlpha = alpha * 0.35
+  ctx.beginPath()
+  ctx.ellipse(0, 0, size * 2, size * 0.7, 0, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(165, 243, 252, 1)'
+  ctx.fill()
+  ctx.beginPath()
+  ctx.moveTo(-size * 2, 0)
+  ctx.lineTo(-size * 3, -size * 0.8)
+  ctx.lineTo(-size * 3,  size * 0.8)
+  ctx.closePath()
+  ctx.fillStyle = 'rgba(165, 243, 252, 1)'
+  ctx.fill()
+  ctx.restore()
+}
+
+function drawEchoJelly(ctx, x, y, size, pulseOffset, t, alpha) {
+  const pulse = Math.sin(t * 0.002 + pulseOffset) * 0.18
+  ctx.save()
+  ctx.translate(x, y)
+  ctx.globalAlpha = alpha * 0.28
+
+  ctx.beginPath()
+  ctx.ellipse(0, 0, size, size * (0.7 + pulse), 0, Math.PI, 0)
+  ctx.fillStyle = 'rgba(129, 140, 248, 1)'
+  ctx.fill()
+
+  ctx.beginPath()
+  ctx.ellipse(0, 0, size * 0.6, size * (0.4 + pulse * 0.5), 0, Math.PI, 0)
+  ctx.fillStyle = 'rgba(196, 181, 253, 0.6)'
+  ctx.fill()
+
+  for (let i = 0; i < 5; i++) {
+    const tx   = (i - 2) * (size * 0.4)
+    const wave = Math.sin(t * 0.003 + i * 0.8 + pulseOffset) * 4
+    ctx.beginPath()
+    ctx.moveTo(tx, 0)
+    ctx.bezierCurveTo(tx + wave, size * 1.2, tx - wave, size * 2.2, tx + wave * 0.5, size * 3)
+    ctx.strokeStyle = 'rgba(196, 181, 253, 0.7)'
+    ctx.lineWidth   = 0.8
+    ctx.globalAlpha = alpha * 0.35
+    ctx.stroke()
+  }
+
+  ctx.restore()
+  ctx.globalAlpha = 1
+}
+
+function animateEcho(t) {
+
+  const centerX = echoCanvas.width / 2
+const centerY = echoCanvas.height / 2
+
+  requestAnimationFrame(animateEcho)
+  ectx.clearRect(0, 0, echoCanvas.width, echoCanvas.height)
+
+  if (!echoActive && echoAlpha <= 0) return
+
+  if (echoActive) {
+    echoProgress = Math.min(echoProgress + 0.008, 1)
+    echoAlpha    = Math.min(echoAlpha + 0.025, 1)
+
+    const maxR = Math.sqrt(echoCanvas.width ** 2 + echoCanvas.height ** 2)
+    const r    = echoProgress * maxR
+
+    ectx.beginPath()
+    ectx.arc(echoCanvas.width / 2, echoCanvas.height / 2, r, 0, Math.PI * 2)
+    ectx.strokeStyle = `rgba(165, 243, 252, ${(1 - echoProgress) * 0.5})`
+    ectx.lineWidth   = 2
+    ectx.stroke()
+
+    if (echoProgress >= 1) {
+      echoActive  = false
+      echoFading  = true
+    }
+  }
+
+  if (echoFading) {
+    echoAlpha = Math.max(echoAlpha - 0.004, 0)
+    if (echoAlpha <= 0) echoFading = false
+  }
+
+  echoGroupTimers.forEach((_, i) => {
+    echoGroupTimers[i]++
+    if (echoGroupTimers[i] > 200) {
+      echoGroupTargets[i] = (Math.random() - 0.5) * Math.PI * 0.5
+      echoGroupTimers[i]  = 0
+    }
+    echoGroupAngles[i] += (echoGroupTargets[i] - echoGroupAngles[i]) * 0.006
+  })
+
+  echoFishes.forEach(f => {
+    const angle = echoGroupAngles[f.group]
+    f.x += Math.cos(angle) * f.speed
+    f.y += Math.sin(angle) * f.speed + Math.sin(t * 0.001 + f.offset) * 0.3
+
+    if (f.x > echoCanvas.width  + 20) f.x = -20
+    if (f.x < -20)                    f.x = echoCanvas.width + 20
+    if (f.y > echoCanvas.height + 20) f.y = -20
+    if (f.y < -20)                    f.y = echoCanvas.height + 20
+
+    drawEchoFish(ectx, f.x, f.y, f.size, angle, echoAlpha)
+  })
+
+  echoJellies.forEach(j => {
+    j.y -= j.speed
+    j.x += Math.sin(t * 0.001 + j.wobble) * j.drift
+
+    if (j.y < -j.size * 4)            j.y = echoCanvas.height + j.size * 4
+    if (j.x > echoCanvas.width  + 50) j.x = -50
+    if (j.x < -50)                    j.x = echoCanvas.width + 50
+
+    drawEchoJelly(ectx, j.x, j.y, j.size, j.pulse, t, echoAlpha)
+  })
+}
+requestAnimationFrame(animateEcho)
+
+echoBtn.addEventListener('click', () => {
+  if (echoActive) return
+  resizeEchoCanvas()
+  spawnEchoCreatures()
+  echoActive   = true
+  echoFading   = false
+  echoProgress = 0
+  echoAlpha    = 0
+  echoBtn.classList.add('pulsing')
+  setTimeout(() => echoBtn.classList.remove('pulsing'), 2000)
+
+  if (typeof audioCtx !== 'undefined') {
+    if (audioCtx.state === 'suspended') audioCtx.resume()
+    const osc  = audioCtx.createOscillator()
+    const gain = audioCtx.createGain()
+    osc.type   = 'sine'
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 1.5)
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2)
+    osc.connect(gain)
+    gain.connect(audioCtx.destination)
+    osc.start(audioCtx.currentTime)
+    osc.stop(audioCtx.currentTime + 2)
+  }
+})
+
 });
+
