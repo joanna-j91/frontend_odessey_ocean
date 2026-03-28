@@ -278,7 +278,7 @@ img, svg { display: block; max-width: 100%; }
 
 .creatures {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   flex-wrap: wrap;
   margin-top: 3rem;
   position: relative;
@@ -286,33 +286,85 @@ img, svg { display: block; max-width: 100%; }
   max-width: var(--max-width);
   margin-left: auto;
   margin-right: auto;
+  padding-top: 140px;
 }
 
 .creature-card {
   flex: 1 1 220px;
-  padding: 2rem 1.5rem;
-  background: rgba(7, 89, 133, 0.3);
-  border: 1px solid rgba(56, 189, 248, 0.15);
-  cursor: pointer;
-  transition: all var(--transition-base);
   position: relative;
-  overflow: hidden;
+  cursor: pointer;
 }
 
-.creature-card::before {
-  content: '';
+.card-details {
+  padding: 2rem 1.5rem;
+  background: rgba(5, 13, 26, 0.55);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  box-shadow: inset 1px 1px 5px rgba(255,255,255,0.05);
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.zone--sunlight .zone__bg-layer {
+  display: none;
+}
+
+.creature-card:hover .card-details,
+.creature-card:focus .card-details {
+  box-shadow: inset 1px 1px 12px var(--glow);
+  border-color: var(--glow-color);
+}
+
+.card-design {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-water-mid), transparent);
+  top: -130px;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 0;
-  transition: opacity var(--transition-base);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 2;
+  filter: drop-shadow(0 0 6px var(--glow-color))
+          drop-shadow(0 0 20px var(--glow-color))
+          drop-shadow(0 0 50px var(--glow-color));
 }
 
-.creature-card:hover { background: rgba(7, 89, 133, 0.5); transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.35); }
-.creature-card:hover::before { opacity: 1; }
+.creature-card:hover .card-design,
+.creature-card:focus .card-design {
+  opacity: 1;
+}
 
-.creature-card__icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+.creature-card[data-creature="clownfish"] .card-design svg {
+  animation: creature-bob 3s ease-in-out infinite;
+}
+
+.creature-card[data-creature="turtle"] .card-design svg {
+  animation: creature-bob 6s ease-in-out infinite;
+}
+
+.creature-card[data-creature="shark"] .card-design svg {
+  animation: creature-swim 5s ease-in-out infinite;
+}
+
+@keyframes creature-bob {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50%       { transform: translateY(-12px) rotate(2deg); }
+}
+
+@keyframes creature-swim {
+  0%, 100% { transform: translateX(0px) rotate(0deg); }
+  33%       { transform: translateX(8px) rotate(1deg); }
+  66%       { transform: translateX(-6px) rotate(-1deg); }
+}
+
+.creature-card__icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
 
 .creature-card h3 {
   font-family: var(--font-display);
@@ -322,7 +374,11 @@ img, svg { display: block; max-width: 100%; }
   margin-bottom: 0.5rem;
 }
 
-.creature-card p { font-size: 0.78rem; line-height: 1.7; color: var(--color-text-muted); }
+.creature-card p {
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
 
 .stats-row {
   display: flex;
@@ -515,4 +571,13 @@ img, svg { display: block; max-width: 100%; }
   height: 100%;
   pointer-events: none;
   z-index: 9996;
+}
+
+.zone--sunlight::before,
+.zone--sunlight::after,
+.zone--sunlight .zone__bg-layer,
+.zone--sunlight .zone__bg-layer--1,
+.zone--sunlight .zone__bg-layer--2 {
+  display: none !important;
+  opacity: 0 !important;
 }

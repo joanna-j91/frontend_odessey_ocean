@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     parallaxLayers.forEach(layer => {
       const section = layer.closest('.zone');
       if (!section) return;
+      if (section.id === 'sunlight') return;  
 
       const rect    = section.getBoundingClientRect();
       const sectionH = section.offsetHeight;
@@ -222,8 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const cursor = document.getElementById('cursor');
   document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
+    cursor.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`
   });
 
   document.querySelectorAll('a, button, .creature-card, .biolumin-canvas').forEach(el => {
@@ -314,7 +314,20 @@ const fishes = Array.from({ length: FISH_COUNT }, () => ({
 
 let schoolAngle = 0
 let targetAngle = 0
-let angleTimer   = 0
+let fishMouseX  = null
+let fishMouseY  = null
+let angleTimer  = 0
+
+document.getElementById('sunlight').addEventListener('mousemove', e => {
+  const rect = fishCanvas.getBoundingClientRect()
+  fishMouseX = e.clientX - rect.left
+  fishMouseY = e.clientY - rect.top
+})
+
+document.getElementById('sunlight').addEventListener('mouseleave', () => {
+  fishMouseX = null
+  fishMouseY = null
+})
 
 function drawFish(ctx, x, y, size, angle) {
   ctx.save()
@@ -339,12 +352,19 @@ function animateFish(t) {
   if (!fishW) return
   fctx.clearRect(0, 0, fishW, fishH)
 
+  if (fishMouseX !== null && fishMouseY !== null) {
+  const centerX = fishW / 2
+  const centerY = fishH / 2
+  targetAngle = Math.atan2(fishMouseY - centerY, fishMouseX - centerX)
+  } else {
   angleTimer++
   if (angleTimer > 180) {
     targetAngle = (Math.random() - 0.5) * Math.PI * 0.6
     angleTimer  = 0
   }
-  schoolAngle += (targetAngle - schoolAngle) * 0.008
+}
+
+schoolAngle += (targetAngle - schoolAngle) * 0.04
 
   fishes.forEach(f => {
     f.x += Math.cos(schoolAngle) * f.speed
