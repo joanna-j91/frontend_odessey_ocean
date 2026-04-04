@@ -1,5 +1,7 @@
 # Ocean Depths
 
+Deployed link: https://odesseyocean.vercel.app/
+
 Ocean Depths is an immersive experience that takes users on a vertical journey through the five major zones of the ocean: all the way from the sunlit surface to the darkness of the Hadal trench. 
 
 Built entirely with HTML, CSS, and vanilla JavaScript, the project transforms the deep sea into an interactive narrative that users may enjoy exploring.
